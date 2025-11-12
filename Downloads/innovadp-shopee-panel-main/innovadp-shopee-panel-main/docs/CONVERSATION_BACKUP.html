@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Backup Técnico · InnovadpStore · Painel Shopee</title>
+    <style>
+      :root {
+        --indigo: #4f46e5;
+        --violet: #7c3aed;
+        --slate-900: #0f172a;
+        --slate-600: #475569;
+      }
+      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; margin: 0; color: var(--slate-900); }
+      header { padding: 24px; background: linear-gradient(90deg, var(--indigo), var(--violet)); color: #fff; }
+      h1 { margin: 0 0 4px; font-size: 20px; }
+      h2 { margin: 28px 0 8px; font-size: 18px; }
+      p, li, code, pre { font-size: 14px; line-height: 1.5; }
+      main { max-width: 980px; margin: 0 auto; padding: 24px; }
+      section { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+      .muted { color: var(--slate-600); }
+      code { background: #f3f4f6; border-radius: 6px; padding: 2px 6px; }
+      pre { background: #0b1220; color: #e2e8f0; padding: 12px; border-radius: 10px; overflow: auto; }
+      .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #eef2ff; color: var(--indigo); font-weight: 600; font-size: 12px; }
+      ul { margin: 8px 0 8px 18px; }
+      a { color: var(--indigo); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="pill">Backup Técnico</div>
+      <h1>InnovadpStore · Painel Shopee</h1>
+      <p class="muted">Resumo de configurações, rotas e passos importantes</p>
+    </header>
+    <main>
+      <section>
+        <h2>Visão Geral</h2>
+        <ul>
+          <li>Stack: Next.js 14 (App Router), TypeScript, Tailwind.</li>
+          <li>Rotas API para Shopee (OAuth, Push, Métricas, Scan).</li>
+          <li>PWA: manifest + service worker (instalável no celular/desktop).</li>
+          <li>Scanner: Html5Qrcode priorizando câmera traseira.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Rotas Principais</h2>
+        <ul>
+          <li><code>GET /api/today</code> — métricas do dia (pedidos READY_TO_SHIP, faturamento, perHour)</li>
+          <li><code>GET /api/scan?code=ORDER_SN</code> — detalhes do pedido para picking</li>
+          <li><code>GET /api/shopee/push</code> — saúde do webhook (retorna <code>{ ok: true }</code>)</li>
+          <li><code>POST /api/shopee/push</code> — Mecanismo de Empurrar (assinado via HMAC)</li>
+          <li><code>GET /api/shopee/oauth/start?target=shop</code> — inicia OAuth</li>
+          <li><code>GET /api/shopee/oauth/callback</code> — troca <code>code</code> por tokens</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Variáveis de Ambiente (produção)</h2>
+        <p>Definir em Vercel &rarr; Project &rarr; Settings &rarr; Environment Variables (Production):</p>
+        <ul>
+          <li><code>SHOPEE_PARTNER_ID</code>, <code>SHOPEE_PARTNER_KEY</code>, <code>SHOPEE_SHOP_ID</code></li>
+          <li><code>SHOPEE_ACCESS_TOKEN</code>, <code>SHOPEE_REFRESH_TOKEN</code></li>
+          <li><code>SHOPEE_PUSH_PARTNER_KEY</code> (Live Push Key)</li>
+          <li><code>TODAY_TIME_FIELD</code> (opcional: <code>update_time</code> | <code>create_time</code>)</li>
+          <li><code>TODAY_MAX_ORDERS</code> (opcional, padrão 500, máx. 10000)</li>
+        </ul>
+        <p class="muted">Observação: variáveis com nomes em PT‑BR não são lidas pelo app.</p>
+      </section>
+
+      <section>
+        <h2>OAuth (gerar tokens)</h2>
+        <ul>
+          <li>Início: <code>/api/shopee/oauth/start?target=shop</code></li>
+          <li>Após autorizar, o callback responde com <code>access_token</code> e <code>refresh_token</code>.</li>
+          <li>Atualize as variáveis no Vercel e redeploy.</li>
+          <li>Escopos recomendados: <strong>Order</strong> e <strong>Product</strong>.</li>
+        </ul>
+        <p class="muted">Redirect URL Domain (Shopee): usar o domínio estável do projeto (não o de deployment).</p>
+      </section>
+
+      <section>
+        <h2>Mecanismo de Push</h2>
+        <ul>
+          <li>URL: <code>https://SEU-DOMINIO/api/shopee/push</code></li>
+          <li>Área de serviço: Brasil (gru1)</li>
+          <li>Live Push Partner Key &rarr; <code>SHOPEE_PUSH_PARTNER_KEY</code> (Vercel)</li>
+        </ul>
+        <p class="muted">O webhook responde <code>success</code> no handshake e valida a assinatura HMAC para eventos reais.</p>
+      </section>
+
+      <section>
+        <h2>PWA (instalar como app)</h2>
+        <ul>
+          <li>Android (Chrome/Edge): menu &rarr; “Instalar app”.</li>
+          <li>iOS (Safari): compartilhar &rarr; “Adicionar à Tela de Início”.</li>
+          <li>Desktop (Chrome/Edge): Ícone “Instalar” na barra de endereço.</li>
+        </ul>
+        <p class="muted">Arquivos: <code>public/manifest.webmanifest</code> e <code>public/sw.js</code>. Componente: <code>components/RegisterSW.tsx</code>.</p>
+      </section>
+
+      <section>
+        <h2>Scanner (Câmera Traseira)</h2>
+        <ul>
+          <li>Implementado com <code>Html5Qrcode</code>, prioriza “rear/environment” por label.</li>
+          <li>Fallback: <code>{ facingMode: { exact: 'environment' } }</code>.</li>
+          <li>Arquivo: <code>components/Scanner.tsx</code>.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Notas de Produção</h2>
+        <ul>
+          <li>Desative “IP Address Whitelist” na Shopee (ou use egress IP fixo) para evitar 403/invalid token.</li>
+          <li>Paginação de pedidos via cursor (até <code>TODAY_MAX_ORDERS</code>).</li>
+          <li>O backend tenta renovar o token automaticamente (200 com erro ou erro HTTP).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Links Úteis</h2>
+        <ul>
+          <li>Home: <code>/</code></li>
+          <li>Métricas: <code>/api/today</code></li>
+          <li>Push: <code>/api/shopee/push</code> (GET saúde)</li>
+          <li>OAuth Start: <code>/api/shopee/oauth/start?target=shop</code></li>
+          <li>OAuth Callback: <code>/api/shopee/oauth/callback?code=...&amp;shop_id=...</code></li>
+          <li>Scan: <code>/api/scan?code=ORDER_SN</code></li>
+        </ul>
+      </section>
+    </main>
+  </body>
+ </html>
+
