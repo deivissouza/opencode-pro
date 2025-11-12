@@ -349,7 +349,7 @@ export async function tryRefreshTokenIfNeeded(lastPayload?: any): Promise<boolea
           : undefined;
 
       await saveTokens({
-        access_token,
+        access_token: accessToken,
         refresh_token: refreshToken,
         expires_at: expiresAt,
       });
