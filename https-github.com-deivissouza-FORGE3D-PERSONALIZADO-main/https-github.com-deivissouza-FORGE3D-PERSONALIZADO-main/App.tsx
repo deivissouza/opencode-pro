@@ -3,49 +3,12 @@ import { Navbar } from './components/Navbar';
 import { PopularSection } from './components/PopularSection';
 import { OrderForm } from './components/OrderForm';
 import { AdminPanel } from './components/AdminPanel';
+import { Footer } from './components/Footer';
 import { StoreProvider } from './src/context/StoreContext';
-import { ChevronRight, Zap, ShieldCheck, Clock } from 'lucide-react';
+import { ChevronRight, Zap, ShieldCheck, Clock, ExternalLink } from 'lucide-react';
 import { PopularModel } from './types';
 
-const Footer = () => (
-  <footer className="bg-dark text-white py-12 border-t border-gray-800">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold text-white">Forge3D</h3>
-          <p className="text-gray-400 text-sm">Transformando bits em átomos com precisão e velocidade.</p>
-        </div>
-        <div>
-          <h4 className="font-bold mb-4">Plataforma</h4>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-white transition-colors">Como Funciona</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Materiais</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Preços</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold mb-4">Legal</h4>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-white transition-colors">Termos de Uso</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Privacidade</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold mb-4">Contato</h4>
-          <p className="text-sm text-gray-400">suporte@forge3d.com</p>
-          <p className="text-sm text-gray-400 mt-2">
-            Rua Mar Vermelho 627, Sala 1<br />
-            São Paulo, SP - Brasil
-          </p>
-          <p className="text-xs text-gray-500 mt-2">CNPJ: 44.165.238/0001-42</p>
-        </div>
-      </div>
-      <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-        © 2024 Forge3D. Todos os direitos reservados.
-      </div>
-    </div>
-  </footer>
-);
+
 
 export default function App() {
   const [selectedPopularLink, setSelectedPopularLink] = useState<string | undefined>(undefined);
@@ -110,7 +73,7 @@ export default function App() {
                   }}
                   className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-bold rounded-full text-white bg-primary hover:bg-blue-700 md:text-lg transition-all shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1"
                 >
-                  Solicitar Impressão
+                  Quero Imprimir
                   <ChevronRight className="ml-2 -mr-1" size={20} />
                 </button>
                 <a
@@ -146,6 +109,40 @@ export default function App() {
                   <h3 className="font-bold text-gray-900 text-lg">Envio em 48h</h3>
                   <p className="text-sm text-gray-500 mt-2">Produção expressa disponível para projetos urgentes.</p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Inspiration Section */}
+          <div className="bg-gray-50 py-16 border-y border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Onde encontrar modelos?</h2>
+              <p className="text-gray-500 mb-10 max-w-2xl mx-auto">Não tem um arquivo? Explore milhões de modelos gratuitos nestes sites e cole o link no nosso formulário.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="https://www.thingiverse.com" target="_blank" rel="noopener noreferrer" className="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                    <ExternalLink size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg text-gray-900">Thingiverse</h3>
+                  <p className="text-sm text-gray-500 mt-2">O maior repositório de modelos 3D gratuitos do mundo.</p>
+                </a>
+
+                <a href="https://www.printables.com" target="_blank" rel="noopener noreferrer" className="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center text-orange-600 mb-4 group-hover:scale-110 transition-transform">
+                    <ExternalLink size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg text-gray-900">Printables</h3>
+                  <p className="text-sm text-gray-500 mt-2">Modelos de alta qualidade verificados pela comunidade Prusa.</p>
+                </a>
+
+                <a href="https://cults3d.com" target="_blank" rel="noopener noreferrer" className="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
+                    <ExternalLink size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg text-gray-900">Cults3D</h3>
+                  <p className="text-sm text-gray-500 mt-2">Designers independentes e modelos artísticos exclusivos.</p>
+                </a>
               </div>
             </div>
           </div>

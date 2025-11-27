@@ -4,7 +4,7 @@ import { Lock, Save, LogOut, Plus, Trash2, Edit2, Image as ImageIcon, Link as Li
 import { PopularModel } from '../types';
 
 export const AdminPanel = () => {
-    const { materials, updateMaterialPrice, popularModels, addModel, updateModel, deleteModel, contactInfo, updateContactInfo } = useStore();
+    const { materials, updateMaterialPrice, addMaterial, deleteMaterial, popularModels, addModel, updateModel, deleteModel, contactInfo, updateContactInfo } = useStore();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
     const [activeTab, setActiveTab] = useState<'prices' | 'models' | 'contact'>('prices');
@@ -23,6 +23,10 @@ export const AdminPanel = () => {
 
     // Contact Form State
     const [contactForm, setContactForm] = useState({ name: '', phone: '' });
+
+    // Material Form State
+    const [isAddingMaterial, setIsAddingMaterial] = useState(false);
+    const [materialForm, setMaterialForm] = useState({ name: '', pricePerGram: 0.15, description: '' });
 
     useEffect(() => {
         if (contactInfo) {
@@ -53,6 +57,18 @@ export const AdminPanel = () => {
         e.preventDefault();
         updateContactInfo(contactForm);
         alert('Informações de contato atualizadas!');
+    };
+
+    const handleAddMaterial = (e: React.FormEvent) => {
+        e.preventDefault();
+        addMaterial({
+            id: materialForm.name.toLowerCase().replace(/\s+/g, '-'),
+            name: materialForm.name,
+            pricePerGram: materialForm.pricePerGram,
+            description: materialForm.description
+        });
+        setIsAddingMaterial(false);
+        setMaterialForm({ name: '', pricePerGram: 0.15, description: '' });
     };
 
     const startEditModel = (model: PopularModel) => {
@@ -145,10 +161,63 @@ export const AdminPanel = () => {
 
                 {activeTab === 'prices' && (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-                            <h2 className="text-lg font-bold text-gray-900">Gerenciar Preços</h2>
-                            <p className="text-sm text-gray-500">Ajuste o valor do grama para cada material.</p>
+                        <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900">Gerenciar Preços</h2>
+                                <p className="text-sm text-gray-500">Ajuste o valor do grama para cada material.</p>
+                            </div>
+                            <button
+                                onClick={() => setIsAddingMaterial(!isAddingMaterial)}
+                                className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                <Plus size={18} />
+                                Novo Material
+                            </button>
                         </div>
+
+                        {isAddingMaterial && (
+                            <div className="p-6 bg-blue-50 border-b border-blue-100 animate-fade-in">
+                                <form onSubmit={handleAddMaterial} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                    <div className="md:col-span-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={materialForm.name}
+                                            onChange={e => setMaterialForm({ ...materialForm, name: e.target.value })}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                            placeholder="Ex: PETG"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Preço/g (R$)</label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            required
+                                            value={materialForm.pricePerGram}
+                                            onChange={e => setMaterialForm({ ...materialForm, pricePerGram: parseFloat(e.target.value) })}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={materialForm.description}
+                                            onChange={e => setMaterialForm({ ...materialForm, description: e.target.value })}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                            placeholder="Ex: Resistente e durável"
+                                        />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Salvar</button>
+                                        <button type="button" onClick={() => setIsAddingMaterial(false)} className="px-3 bg-gray-200 rounded-lg hover:bg-gray-300">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
                         <ul className="divide-y divide-gray-100">
                             {materials.map((material) => (
                                 <li key={material.id} className="p-6 hover:bg-gray-50 transition-colors">
@@ -165,8 +234,15 @@ export const AdminPanel = () => {
                                                 min="0"
                                                 value={material.pricePerGram}
                                                 onChange={(e) => updateMaterialPrice(material.id, parseFloat(e.target.value))}
-                                                className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary text-right font-mono"
+                                                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary text-right font-mono"
                                             />
+                                            <button
+                                                onClick={() => deleteMaterial(material.id)}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Excluir Material"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </div>
                                     </div>
                                 </li>

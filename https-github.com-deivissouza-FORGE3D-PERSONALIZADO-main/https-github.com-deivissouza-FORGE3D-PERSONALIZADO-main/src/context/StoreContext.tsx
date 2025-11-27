@@ -22,6 +22,8 @@ interface StoreContextType {
     isLoading: boolean;
     error: string | null;
     updateMaterialPrice: (id: string, newPrice: number) => Promise<void>;
+    addMaterial: (material: Material) => Promise<void>;
+    deleteMaterial: (id: string) => Promise<void>;
     addModel: (model: PopularModel) => Promise<void>;
     updateModel: (model: PopularModel) => Promise<void>;
     deleteModel: (id: string) => Promise<void>;
@@ -227,6 +229,54 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     };
 
+    const addMaterial = async (material: Material) => {
+        const updatedMaterials = [...materials, material];
+        setMaterials(updatedMaterials);
+
+        if (!isSupabaseConfigured) {
+            localStorage.setItem('forge3d_materials', JSON.stringify(updatedMaterials));
+            return;
+        }
+
+        try {
+            const { error } = await supabase!
+                .from('materials')
+                .insert({
+                    id: material.id,
+                    name: material.name,
+                    price_per_gram: material.pricePerGram,
+                    description: material.description
+                });
+
+            if (error) throw error;
+        } catch (err) {
+            console.error('Error adding material:', err);
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        }
+    };
+
+    const deleteMaterial = async (id: string) => {
+        const updatedMaterials = materials.filter(m => m.id !== id);
+        setMaterials(updatedMaterials);
+
+        if (!isSupabaseConfigured) {
+            localStorage.setItem('forge3d_materials', JSON.stringify(updatedMaterials));
+            return;
+        }
+
+        try {
+            const { error } = await supabase!
+                .from('materials')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+        } catch (err) {
+            console.error('Error deleting material:', err);
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        }
+    };
+
     const updateContactInfo = async (info: ContactInfo) => {
         setContactInfo(info);
 
@@ -262,6 +312,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             addModel,
             updateModel,
             deleteModel,
+            addMaterial,
+            deleteMaterial,
             updateContactInfo
         }}>
             {children}

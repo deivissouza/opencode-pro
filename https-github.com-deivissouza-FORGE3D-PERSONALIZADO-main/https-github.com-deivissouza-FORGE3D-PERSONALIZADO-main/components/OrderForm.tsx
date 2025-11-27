@@ -143,9 +143,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialLink }) => {
 
               <button
                 onClick={() => setIsCheckoutOpen(true)}
-                className="w-full mt-6 bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:shadow-blue-600/40 transition-all transform active:scale-[0.98]"
+                className="w-full mt-6 bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 hover:bg-green-700 hover:shadow-green-600/40 transition-all transform active:scale-[0.98] text-lg flex items-center justify-center gap-2"
               >
-                Finalizar Pedido
+                <CheckCircle2 size={24} />
+                Quero Imprimir
               </button>
             </div>
           )}
@@ -263,23 +264,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialLink }) => {
             < div className="space-y-6" >
               <h3 className="text-lg font-bold text-gray-900">2. Configurações de Impressão</h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="flex justify-between text-sm font-medium text-gray-700">
-                    Preenchimento (Infill)
-                    <span className="text-primary font-bold">{settings.infill}%</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="10"
-                    max="100"
-                    step="5"
-                    value={settings.infill}
-                    onChange={(e) => setSettings({ ...settings, infill: parseInt(e.target.value) })}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-                  />
-                  <p className="text-xs text-gray-500">Mais preenchimento = Mais forte e mais caro.</p>
-                </div>
+              <div className="grid grid-cols-1 gap-6">
+
 
                 <div className="space-y-2">
                   <label className="flex justify-between text-sm font-medium text-gray-700">
